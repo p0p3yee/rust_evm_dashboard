@@ -1,0 +1,11 @@
+[package]
+name = "rust_evm_dashboard"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.22"
+diesel = { version = "1.4.8", features = ["sqlite"]}
+dotenv = "0.15.0"
+web3 = "0.18.0"
+yew = "0.19.3"
