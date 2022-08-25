@@ -1,4 +1,5 @@
 use crate::schema::{accounts, endpoints};
+use serde::{Deserialize, Serialize};
 
 #[derive(Insertable)]
 #[table_name = "accounts"]
@@ -8,11 +9,11 @@ pub struct NewAccount<'a> {
     pub private_key: &'a str
 }
 
-#[derive(Debug, Queryable, AsChangeset)]
+#[derive(Debug, Serialize, Deserialize, Queryable, AsChangeset, PartialEq)]
 pub struct Account {
     pub address: String,
-    pub name: String,
-    pub private_key: String
+    pub name: Option<String>,
+    pub private_key: Option<String>
 }
 
 #[derive(Insertable)]
@@ -23,7 +24,7 @@ pub struct NewEndpoint<'a> {
     pub symbol: &'a str
 }
 
-#[derive(Debug, Queryable, AsChangeset)]
+#[derive(Debug, Serialize, Deserialize, Queryable, AsChangeset, PartialEq)]
 pub struct Endpoint {
     pub name: String,
     pub url: String,
