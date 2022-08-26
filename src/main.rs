@@ -5,8 +5,9 @@ mod routes;
 mod schema;
 mod models;
 mod actions;
+mod apierror;
 
-use actix_web::{web, App, HttpServer};
+use actix_web::{web, App, HttpServer, middleware::Logger};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use std::env;
@@ -24,11 +25,15 @@ async fn main() -> std::io::Result<()> {
         .build(ConnectionManager::<SqliteConnection>::new(&db_url))
         .expect(&format!("Error connecting to DB: {}", db_url));
 
+    println!("Starting Backend on {}", backend_url);
+
     HttpServer::new(move || {
         App::new()
+            .wrap(Logger::default())    
             .app_data(web::Data::new(pool_conn.clone()))
             .service(routes::get_endpoints)
             .service(routes::get_accounts)
+            .service(routes::new_account)
     })
     .bind(backend_url)?
     .run()
