@@ -34,6 +34,7 @@ async fn main() -> std::io::Result<()> {
             .service(routes::get_endpoints)
             .service(routes::get_accounts)
             .service(routes::new_account)
+            .service(routes::update_account)
     })
     .bind(backend_url)?
     .run()
