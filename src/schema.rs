@@ -7,7 +7,8 @@ table! {
 }
 
 table! {
-    endpoints (name) {
+    endpoints (id) {
+        id -> Integer,
         name -> Text,
         url -> Text,
         symbol -> Text,

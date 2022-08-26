@@ -1,5 +1,6 @@
 CREATE TABLE endpoints (
-    `name` text NOT NULL PRIMARY KEY,
+    `id` integer NOT NULL PRIMARY KEY,
+    `name` text NOT NULL,
     `url` text NOT NULL,
     `symbol` text NOT NULL
 )

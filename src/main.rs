@@ -32,6 +32,8 @@ async fn main() -> std::io::Result<()> {
             .wrap(Logger::default())    
             .app_data(web::Data::new(pool_conn.clone()))
             .service(routes::get_endpoints)
+            .service(routes::new_endpoint)
+            .service(routes::update_endpoint)
             .service(routes::get_accounts)
             .service(routes::new_account)
             .service(routes::update_account)

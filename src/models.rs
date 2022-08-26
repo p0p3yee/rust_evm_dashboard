@@ -26,6 +26,14 @@ pub struct NewEndpoint<'a> {
 
 #[derive(Debug, Serialize, Deserialize, Queryable, AsChangeset, PartialEq)]
 pub struct Endpoint {
+    pub id: i32,
+    pub name: String,
+    pub url: String,
+    pub symbol: String
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct NewEndpointReq {
     pub name: String,
     pub url: String,
     pub symbol: String

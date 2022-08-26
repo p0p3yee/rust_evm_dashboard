@@ -1,5 +1,5 @@
 use crate::actions::*;
-use crate::models::{ Account, Endpoint };
+use crate::models::{ Account, Endpoint, NewEndpointReq };
 use crate::Pool;
 use crate::apierror::ApiError;
 // use actix_web::{HttpRequest, Responder};
@@ -11,6 +11,49 @@ pub async fn get_endpoints(pool: web::Data<Pool>) -> Result<Json<Vec<Endpoint>>,
     match get_all_endpoints(&db_conn).await {
         Ok(eps) => Ok(Json(eps)),
         _ => Err(ApiError::DatabaseInternalError)
+    }
+}
+
+#[post("/endpoint/new")]
+pub async fn new_endpoint(ep: web::Json<NewEndpointReq>, pool: web::Data<Pool>) -> Result<Json<String>, ApiError> {
+    let db_conn = pool.get().unwrap();
+    let ep = ep.into_inner();
+    println!("New Endpoint: {:?}", ep);
+    let result = create_endpoint(
+        &db_conn,
+        &ep.name,
+        &ep.url,
+        &ep.symbol,
+    ).await;
+
+    match result {
+        Ok (name) => Ok(Json(name.to_string())),
+        Err (e) => {
+            println!("Error in creating endpoint: {:?}", e);
+            Err(ApiError::EndpointCreationFailure)
+        }
+    }
+}
+
+#[post("/endpoint/update")]
+pub async fn update_endpoint(ep: web::Json<Endpoint>, pool: web::Data<Pool>) -> Result<Json<Endpoint>, ApiError> {
+    let db_conn = pool.get().unwrap();
+    let ep = ep.into_inner();
+
+    let result = update_endpoint_data(
+        &db_conn, 
+        ep.id,
+        &ep.name,
+        &ep.url,
+        &ep.symbol
+    ).await;
+
+    match result {
+        Ok (updated_ep) => Ok(Json(updated_ep)),
+        Err (e) => {
+            println!("Error in updating endpoint: {:?}", e);
+            Err(ApiError::EndpointNotFound)
+        }
     }
 }
 
