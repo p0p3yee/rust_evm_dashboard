@@ -1,8 +1,26 @@
 use crate::models::{NewAccount, Account, Endpoint, NewEndpoint};
-use diesel::{prelude::*, result::Error};
+use diesel::prelude::*;
+use diesel::result::Error as DieselError;
+use crate::apierror::ApiError;
+
+fn parse_diesel_error (err: DieselError) -> ApiError {
+    match err {
+        DieselError::InvalidCString(_) => ApiError::InvalidData,
+        DieselError::DatabaseError(kind, info) => match kind {
+            diesel::result::DatabaseErrorKind::UniqueViolation => ApiError::AlreadyExists,
+            kind => {
+                println!("Unknown database error kind: {:?} : {:?}", kind, info.message());
+                ApiError::DatabaseInternalError
+            },
+        },
+        DieselError::NotFound => ApiError::TargetNotFound,
+        DieselError::QueryBuilderError(_) => ApiError::NoUpdateRequired,
+        e => ApiError::Error(e.to_string()),
+    }
+}
 
 // Return account address if success
-pub async fn create_account<'a>(conn: &SqliteConnection, addr: &'a str, name: &'a str, pkey: &'a str) -> Result<String, Error> {
+pub async fn create_account<'a>(conn: &SqliteConnection, addr: &'a str, name: &'a str, pkey: &'a str) -> Result<String, ApiError> {
     use crate::schema::accounts;
 
     let new_acc = NewAccount {
@@ -17,32 +35,32 @@ pub async fn create_account<'a>(conn: &SqliteConnection, addr: &'a str, name: &'
     
     match result {
         Ok(_) => Ok(addr.to_string()),
-        Err(e) => Err(e),
+        Err(e) => Err(parse_diesel_error(e)),
     }
 }
 
 // Return endpoint name if success
-pub async fn create_endpoint<'a>(conn: &SqliteConnection, name: &'a str, url: &'a str, symbol: &'a str) -> Result<String, Error> {
-    use crate::schema::endpoints;
+pub async fn create_endpoint<'a>(conn: &SqliteConnection, ename: &'a str, eurl: &'a str, esymbol: &'a str) -> Result<String, ApiError> {
+    use crate::schema::endpoints::dsl::*;
 
     let new_endpoint = NewEndpoint {
-        name: name,
-        url: url,
-        symbol: symbol
+        name: ename,
+        url: eurl,
+        symbol: esymbol
     };
 
-    let result = diesel::insert_into(endpoints::table)
+    let result = diesel::insert_into(endpoints)
         .values(&new_endpoint)
         .execute(conn);
-    println!("Create Result: {:?}", result);
+
     match result {
-        Ok(_) => Ok(name.to_string()),
-        Err(e) => Err(e),
+        Ok(_) => Ok(ename.to_string()),
+        Err(e) => Err(parse_diesel_error(e)),
     }
 }
 
 // Return new account name if success
-pub async fn update_account_name(conn: &SqliteConnection, target_addr: &str, new_name: &str) -> Result<String, Error> {
+pub async fn update_account_name(conn: &SqliteConnection, target_addr: &str, new_name: &str) -> Result<String, ApiError> {
     use crate::schema::accounts::dsl::*;
 
     let result = diesel::update(accounts.find(target_addr))
@@ -55,16 +73,16 @@ pub async fn update_account_name(conn: &SqliteConnection, target_addr: &str, new
     match result {
         Ok(num) => {
             if num == 0 {
-                return Err(Error::NotFound)
+                return Err(ApiError::TargetNotFound)
             }
             Ok(new_name.to_string())
         },
-        Err(e) => Err(e)
+        Err(e) => Err(parse_diesel_error(e))
     }
 }
 
 // Return the new endpoint if success
-pub async fn update_endpoint_data(conn: &SqliteConnection, target_id: i32, new_name: &str, new_url: &str, new_symbol: &str) -> Result<Endpoint, Error> {
+pub async fn update_endpoint_data(conn: &SqliteConnection, target_id: i32, new_name: &str, new_url: &str, new_symbol: &str) -> Result<Endpoint, ApiError> {
     use crate::schema::endpoints::dsl::*;
 
     let result = diesel::update(endpoints.find(target_id))
@@ -78,7 +96,7 @@ pub async fn update_endpoint_data(conn: &SqliteConnection, target_id: i32, new_n
         match result {
             Ok(num) => {
                 if num == 0 {
-                    return Err(Error::NotFound)
+                    return Err(ApiError::TargetNotFound)
                 }
                 Ok(Endpoint {
                     id: target_id,
@@ -87,16 +105,22 @@ pub async fn update_endpoint_data(conn: &SqliteConnection, target_id: i32, new_n
                     symbol: new_symbol.to_string()
                 })
             },
-            Err(e) => Err(e)
+            Err(e) => Err(parse_diesel_error(e))
         }
 }
 
-pub async fn get_all_accounts(conn: &SqliteConnection) -> Result<Vec<Account>, diesel::result::Error> {
+pub async fn get_all_accounts(conn: &SqliteConnection) -> Result<Vec<Account>, ApiError> {
     use crate::schema::accounts::dsl::accounts;
-    accounts.load::<Account>(conn)
+    match accounts.load::<Account>(conn) {
+        Ok(acc) => Ok(acc),
+        Err(e) => Err(parse_diesel_error(e)),
+    }
 }
 
-pub async fn get_all_endpoints(conn: &SqliteConnection) -> Result<Vec<Endpoint>, diesel::result::Error> {
+pub async fn get_all_endpoints(conn: &SqliteConnection) -> Result<Vec<Endpoint>, ApiError> {
     use crate::schema::endpoints::dsl::endpoints;
-    endpoints.load::<Endpoint>(conn)
+    match endpoints.load::<Endpoint>(conn) {
+        Ok(eps) => Ok(eps),
+        Err(e) => Err(parse_diesel_error(e)),
+    }
 }
