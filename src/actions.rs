@@ -49,6 +49,14 @@ pub async fn create_endpoint<'a>(conn: &SqliteConnection, ename: &'a str, eurl: 
         symbol: esymbol
     };
 
+    let exists_id = endpoints
+        .filter(url.eq(eurl))
+        .first::<Endpoint>(conn);
+
+    if exists_id.is_ok() {
+        return Err(ApiError::Error("URL already exists".to_string()))
+    }
+
     let result = diesel::insert_into(endpoints)
         .values(&new_endpoint)
         .execute(conn);
@@ -65,11 +73,8 @@ pub async fn update_account_name(conn: &SqliteConnection, target_addr: &str, new
 
     let result = diesel::update(accounts.find(target_addr))
         .set(name.eq(new_name))
-        // .filter(address.eq(target_addr))
         .execute(conn);
 
-    // println!("Update Result: {:?}", result);
-    
     match result {
         Ok(num) => {
             if num == 0 {
@@ -84,6 +89,14 @@ pub async fn update_account_name(conn: &SqliteConnection, target_addr: &str, new
 // Return the new endpoint if success
 pub async fn update_endpoint_data(conn: &SqliteConnection, target_id: i32, new_name: &str, new_url: &str, new_symbol: &str) -> Result<Endpoint, ApiError> {
     use crate::schema::endpoints::dsl::*;
+
+    let exists_id = endpoints
+        .filter(url.eq(new_url))
+        .first::<Endpoint>(conn);
+
+    if exists_id.is_ok() {
+        return Err(ApiError::Error("URL already exists".to_string()))
+    }
 
     let result = diesel::update(endpoints.find(target_id))
         .set((
