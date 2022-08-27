@@ -14,3 +14,4 @@ serde_json = "1.0.85"
 serde = "1.0.144"
 wasm-logger = "0.2.0"
 web3 = { version = "0.18.0", default_features = false, features = ["wasm"] }
+yew-hooks = "0.1.56"

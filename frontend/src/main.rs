@@ -1,35 +1,27 @@
+pub mod components;
+pub mod routes;
+pub mod types;
+pub mod services;
+
 use yew::prelude::*;
 use yew_router::prelude::*;
 
-#[derive(Clone, Routable, PartialEq)]
-enum Route {
-    #[at("/")]
-    HomeView
-}
+use crate::components::{
+    footer::Footer, header::Header, setting_context_provider::SettingContextProvider
+};
 
-#[function_component(HomeView)]
-fn home_view() -> Html {
-    return html! {
-        <>
-            {"Rust EVM Dashboard"}
-        </>
-    }
-}
-
-fn switch(route: &Route) -> Html {
-    match route {
-        Route::HomeView => html! {
-            <HomeView/>
-        }
-    }
-}
+use crate::routes::{switch, Route};
 
 #[function_component(App)]
 fn app() -> Html {
     html! {
-        <BrowserRouter>
-            <Switch<Route> render={Switch::render(switch)} />
-        </BrowserRouter>
+        <SettingContextProvider>
+            <BrowserRouter>
+                <Header />
+                <Switch<Route> render={Switch::render(switch)} />
+                <Footer />
+            </BrowserRouter>
+        </SettingContextProvider>
     }
 }
 
