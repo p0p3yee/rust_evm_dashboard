@@ -1,6 +1,7 @@
 [package]
 name = "rust_evm_dashboard"
 version = "0.1.0"
+author = ["p0p3yee"]
 edition = "2021"
 
 [dependencies]
