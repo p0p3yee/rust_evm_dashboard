@@ -18,6 +18,10 @@ pub type Pool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
 
+    std::env::set_var("RUST_LOG", "debug");
+    std::env::set_var("RUST_BACKTRACE", "1");
+    env_logger::init();
+
     let backend_url = env::var("BACKEND_URL").expect("BACKEND_URL not found in .env");
     let db_url = env::var("DATABASE_URL").expect("DATABASE_URL not found in .env");
 
