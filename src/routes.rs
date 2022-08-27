@@ -1,5 +1,5 @@
 use crate::actions::*;
-use crate::models::{ Account, Endpoint, NewEndpointReq };
+use crate::models::{ Account, Endpoint, NewEndpointReq, Setting, UpdateSettingReq };
 use crate::Pool;
 use actix_web::HttpResponse;
 use serde_json::json;
@@ -16,6 +16,37 @@ fn response_builder<T: serde::Serialize>(is_error: bool, data: T) -> HttpRespons
             "status": status,
             "data": data
         }).to_string())
+}
+
+#[get("/setting")]
+pub async fn get_setting(pool: web::Data<Pool>) -> HttpResponse {
+    let db_conn = pool.get().unwrap();
+    match get_current_setting(&db_conn).await {
+        Ok(s) => response_builder(false, s),
+        Err(e) => response_builder(true, e.to_string())
+    }
+}
+
+#[post("/setting/init")]
+pub async fn init_setting(s: web::Json<Setting>, pool: web::Data<Pool>) -> HttpResponse {
+    let db_conn = pool.get().unwrap();
+    let setting = s.into_inner();
+    println!("Init setting with endpoint id: {:?}", setting.selected_endpoint_id);
+    match inititialize_setting(&db_conn, setting.selected_endpoint_id).await {
+        Ok(id) => response_builder(false, id),
+        Err(e) => response_builder(true, e.to_string())
+    }
+}
+
+#[post("/setting/update")]
+pub async fn update_setting(s: web::Json<UpdateSettingReq>, pool: web::Data<Pool>) -> HttpResponse {
+    let db_conn = pool.get().unwrap();
+    let setting = s.into_inner();
+    println!("Update setting from endpoint id: {:?} to id: {:?}", setting.from_endpoint_id, setting.to_endpoint_id);
+    match update_current_setting(&db_conn, setting.from_endpoint_id, setting.to_endpoint_id).await {
+        Ok(id) => response_builder(false, id),
+        Err(e) => response_builder(true, e.to_string())
+    }
 }
 
 #[get("/endpoint")]

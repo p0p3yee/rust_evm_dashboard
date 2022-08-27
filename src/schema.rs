@@ -15,7 +15,16 @@ table! {
     }
 }
 
+table! {
+    settings (selected_endpoint_id) {
+        selected_endpoint_id -> Integer,
+    }
+}
+
+joinable!(settings -> endpoints (selected_endpoint_id));
+
 allow_tables_to_appear_in_same_query!(
     accounts,
     endpoints,
+    settings,
 );

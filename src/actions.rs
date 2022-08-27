@@ -1,4 +1,4 @@
-use crate::models::{NewAccount, Account, Endpoint, NewEndpoint};
+use crate::models::{NewAccount, Account, Endpoint, NewEndpoint, NewSetting, Setting};
 use diesel::prelude::*;
 use diesel::result::Error as DieselError;
 use crate::apierror::ApiError;
@@ -16,6 +16,23 @@ fn parse_diesel_error (err: DieselError) -> ApiError {
         DieselError::NotFound => ApiError::TargetNotFound,
         DieselError::QueryBuilderError(_) => ApiError::NoUpdateRequired,
         e => ApiError::Error(e.to_string()),
+    }
+}
+
+pub async fn inititialize_setting(conn: &SqliteConnection, id: i32) -> Result<i32, ApiError> {
+    use crate::schema::settings;
+
+    let new_setting = NewSetting {
+        selected_endpoint_id: id
+    };
+
+    let result = diesel::insert_into(settings::table)
+        .values(&new_setting)
+        .execute(conn);
+    
+    match result {
+        Ok(_) => Ok(id),
+        Err(e) => Err(parse_diesel_error(e)),
     }
 }
 
@@ -64,6 +81,24 @@ pub async fn create_endpoint<'a>(conn: &SqliteConnection, ename: &'a str, eurl: 
     match result {
         Ok(_) => Ok(ename.to_string()),
         Err(e) => Err(parse_diesel_error(e)),
+    }
+}
+
+pub async fn update_current_setting(conn: &SqliteConnection, from_id: i32, to_id: i32) -> Result<i32, ApiError> {
+    use crate::schema::settings::dsl::*;
+
+    let result = diesel::update(settings.find(from_id))
+        .set(selected_endpoint_id.eq(to_id))
+        .execute(conn);
+
+    match result {
+        Ok(num) => {
+            if num == 0 {
+                return Err(ApiError::TargetNotFound)
+            }
+            Ok(to_id)
+        },
+        Err(e) => Err(parse_diesel_error(e))
     }
 }
 
@@ -120,6 +155,14 @@ pub async fn update_endpoint_data(conn: &SqliteConnection, target_id: i32, new_n
             },
             Err(e) => Err(parse_diesel_error(e))
         }
+}
+
+pub async fn get_current_setting(conn: &SqliteConnection) -> Result<Vec<Setting>, ApiError> {
+    use crate::schema::settings::dsl::settings;
+    match settings.load::<Setting>(conn) {
+        Ok(s) => Ok(s),
+        Err(e) => Err(parse_diesel_error(e)),
+    }
 }
 
 pub async fn get_all_accounts(conn: &SqliteConnection) -> Result<Vec<Account>, ApiError> {

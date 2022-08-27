@@ -1,4 +1,4 @@
-use crate::schema::{accounts, endpoints};
+use crate::schema::{accounts, endpoints, settings};
 use serde::{Deserialize, Serialize};
 
 #[derive(Insertable)]
@@ -37,4 +37,21 @@ pub struct NewEndpointReq {
     pub name: String,
     pub url: String,
     pub symbol: String
+}
+
+#[derive(Insertable)]
+#[table_name = "settings"]
+pub struct NewSetting {
+    pub selected_endpoint_id: i32
+}
+
+#[derive(Debug, Serialize, Deserialize, Queryable, AsChangeset, PartialEq)]
+pub struct Setting {
+    pub selected_endpoint_id: i32
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct UpdateSettingReq {
+    pub from_endpoint_id: i32,
+    pub to_endpoint_id: i32
 }
