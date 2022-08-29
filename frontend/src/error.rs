@@ -9,4 +9,7 @@ pub enum Error {
 
     #[error("Deserialize Error")]
     DeserializeError,
+
+    #[error("Invalid request url")]
+    InvalidReqUrl,
 }

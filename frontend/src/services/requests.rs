@@ -13,9 +13,12 @@ where
     T: DeserializeOwned + 'static + Debug,  
 {
     let allow_body = method == reqwest::Method::POST;
-    let url = format!("{}/{}", API_ENDPOINT, function);
+    let url = reqwest::Url::parse(&format!("{}/{}", API_ENDPOINT, function));
+    if url.is_err() {
+        return Err(Error::InvalidReqUrl)
+    }
     let mut builder = reqwest::Client::new()
-        .request(method, url)
+        .request(method, url.clone().unwrap())
         .header("Content-Type", "application/json");
     
     if allow_body {
@@ -29,11 +32,10 @@ where
                 return Err(Error::DeserializeError)
             }
             let data: ReqResponse<T> = data.unwrap();
-            println!("Resp: {:?}", data);
             Ok(data)
         },
         Err(e) => {
-            println!("Error in request: {:?}", e);
+            log::info!("Error in request: {:?}", e);
             Err(Error::RequestError)
         }
     }
