@@ -5,6 +5,7 @@ author = ["p0p3yee"]
 edition = "2021"
 
 [dependencies]
+actix-cors = "0.6.2"
 actix-web = "4.1.0"
 derive_more = "0.99.17"
 diesel = { version = "1.4.8", features = ["sqlite", "r2d2"]}

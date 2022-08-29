@@ -7,7 +7,8 @@ mod models;
 mod actions;
 mod apierror;
 
-use actix_web::{web, App, HttpServer, middleware::Logger};
+use actix_cors::Cors;
+use actix_web::{http, web, App, HttpServer, middleware::Logger};
 use diesel::prelude::*;
 use diesel::r2d2::{self, ConnectionManager};
 use std::env;
@@ -32,7 +33,13 @@ async fn main() -> std::io::Result<()> {
     println!("Starting Backend on {}", backend_url);
 
     HttpServer::new(move || {
+        let cors = Cors::default()
+        .allow_any_origin()
+        .allowed_methods(vec!["GET", "POST"])
+        .allowed_header(http::header::CONTENT_TYPE);
+        
         App::new()
+            .wrap(cors)
             .wrap(Logger::default())    
             .app_data(web::Data::new(pool_conn.clone()))
             .service(routes::get_endpoints)
