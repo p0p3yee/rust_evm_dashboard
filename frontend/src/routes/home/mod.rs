@@ -10,14 +10,57 @@ pub fn home() -> Html {
                     {"Rust EVM Dashboard"}
                 </p>
                 <p class="subtitle">
-                    {"Quisque facilisis lectus est, a vehicula dui mollis at. Vivamus eget ligula eros. Mauris ultricies felis quis mauris pharetra tristique. Curabitur ut eros consectetur mauris imperdiet ullamcorper eu id libero. Suspendisse potenti. Maecenas egestas non nibh eu varius. Donec non cursus neque. Aenean euismod nibh nibh, at lobortis neque porta quis. Mauris nec pulvinar tellus, ut sodales enim."}
+                    {"Manage ALL your accounts on ALL EVM chain on this platform."}
                 </p>
                 </div>
             </section>
-            <section class="section is-large">
-                <h1 class="title has-text-centered">{"Home Page"}</h1>
-                
+
+            <div class="container ">
+                <section class="section">
+                    <nav class="level">
+                        <div class="level-item has-text-centered">
+                            <h1 class="title">
+                                {"XXX Chain Status"}
+                            </h1>
+                        </div>
+                    </nav>
+                </section>
+            </div>
+
+            <section class="section">
+                <nav class="level">
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">{"Current Block"}</p>
+                            <p class="title">{"#"}{12345}</p>
+                        </div>
+                        </div>
+                        <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">{"ABC"}</p>
+                            <p class="title">{123}</p>
+                        </div>
+                        </div>
+                        <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">{"Def"}</p>
+                            <p class="title">{"555"}</p>
+                        </div>
+                        </div>
+                        <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">{"Ghi"}</p>
+                            <p class="title">{"abcde"}</p>
+                        </div>
+                    </div>
+                </nav>   
             </section>
+
+            <div class="container">
+                <section class="section is-medium">
+                </section>
+            </div>
+            
         </div>
         
     }
