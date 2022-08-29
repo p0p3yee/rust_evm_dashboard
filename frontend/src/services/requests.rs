@@ -1,4 +1,7 @@
 use dotenv_codegen::dotenv;
+use gloo::storage::{LocalStorage, Storage};
+use lazy_static::lazy_static;
+use parking_lot::RwLock;
 use serde::{de::DeserializeOwned, Serialize};
 use std::fmt::Debug;
 
@@ -6,6 +9,33 @@ use crate::error::Error;
 use crate::types::ReqResponse;
 
 const API_ENDPOINT: &str = dotenv!("BACKEND_URL");
+const SELECTED_ENDPOINT_KEY: &str = "endpoint.selected";
+
+lazy_static! {
+    // Selected Endpoint id
+    pub static ref SELECTED: RwLock<Option<i32>> = {
+        if let Ok(selected) = LocalStorage::get(SELECTED_ENDPOINT_KEY) {
+            RwLock::new(Some(selected))
+        } else {
+            RwLock::new(None)
+        }
+    };
+}
+
+pub fn set_selected(index: Option<i32>) {
+    if let Some(s) = index.clone() {
+        LocalStorage::set(SELECTED_ENDPOINT_KEY, s).expect("Failed to set selected endpoint in localstorage");
+    } else {
+        LocalStorage::delete(SELECTED_ENDPOINT_KEY);
+    }
+    let mut selected_lock = SELECTED.write();
+    *selected_lock = index;
+}
+
+pub fn get_selected() -> Option<i32> {
+    let selected_lock = SELECTED.read();
+    selected_lock.clone()
+}
 
 pub async fn request<B, T>(method: reqwest::Method, function: String, body: B) -> Result<ReqResponse<T>, Error>
 where
@@ -46,4 +76,12 @@ where
     T: DeserializeOwned + 'static + Debug,
 {
     request(reqwest::Method::GET, function, ()).await
+}
+
+pub async fn request_post<T, B>(function: String, body: B) -> Result<ReqResponse<T>, Error>
+where
+    T: DeserializeOwned + 'static + Debug,
+    B: Serialize + Debug,
+{
+    request(reqwest::Method::POST, function, body).await
 }
