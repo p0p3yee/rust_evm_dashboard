@@ -1,4 +1,6 @@
 pub mod components;
+pub mod error;
+pub mod hooks;
 pub mod routes;
 pub mod types;
 pub mod services;
