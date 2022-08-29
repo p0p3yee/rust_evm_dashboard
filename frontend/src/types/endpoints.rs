@@ -1,13 +1,17 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
-pub struct Account {
+pub struct Endpoint {
     pub name: String,
-    pub address: String,
-    pub private_key: String
+    pub url: String,
+    pub symbol: String
 }
 
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Default)]
-pub struct UserSetting {
-    pub selected_endpoint_id: i32,
+pub struct UpdateEndpointReq {
+    pub id: i32,
+    pub name: String,
+    pub url: String,
+    pub symbol: String
 }

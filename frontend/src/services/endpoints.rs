@@ -1,0 +1,16 @@
+use super::requests::request_post;
+use super::{request_get};
+use crate::error::Error;
+use crate::types::*;
+
+pub async fn all() -> Result<ReqResponse<Vec<Endpoint>>, Error> {
+    request_get::<Vec<Endpoint>>("endpoint".to_string()).await
+}
+
+pub async fn create(ep: Endpoint) -> Result<ReqResponse<String>, Error> {
+    request_post("endpoint/new".to_string(), ep).await
+}
+
+pub async fn update(body: UpdateEndpointReq) -> Result<ReqResponse<Endpoint>, Error> {
+    request_post("endpoint/update".to_string(), body).await
+}
