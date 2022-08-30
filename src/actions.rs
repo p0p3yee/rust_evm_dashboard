@@ -57,13 +57,15 @@ pub async fn create_account<'a>(conn: &SqliteConnection, addr: &'a str, name: &'
 }
 
 // Return endpoint name if success
-pub async fn create_endpoint<'a>(conn: &SqliteConnection, ename: &'a str, eurl: &'a str, esymbol: &'a str) -> Result<String, ApiError> {
+pub async fn create_endpoint<'a>(conn: &SqliteConnection, ename: &'a str, eurl: &'a str, esymbol: &'a str, eexplorer_url: &'a str, echain_id: &'a str) -> Result<String, ApiError> {
     use crate::schema::endpoints::dsl::*;
 
     let new_endpoint = NewEndpoint {
         name: ename,
         url: eurl,
-        symbol: esymbol
+        symbol: esymbol,
+        explorer_url: eexplorer_url,
+        chain_id: echain_id
     };
 
     let exists_id = endpoints
@@ -122,7 +124,7 @@ pub async fn update_account_name(conn: &SqliteConnection, target_addr: &str, new
 }
 
 // Return the new endpoint if success
-pub async fn update_endpoint_data(conn: &SqliteConnection, target_id: i32, new_name: &str, new_url: &str, new_symbol: &str) -> Result<Endpoint, ApiError> {
+pub async fn update_endpoint_data(conn: &SqliteConnection, target_id: i32, new_name: &str, new_url: &str, new_symbol: &str, new_chain_id: &str, new_explorer_url: Option<String>) -> Result<Endpoint, ApiError> {
     use crate::schema::endpoints::dsl::*;
 
     let exists_id = endpoints
@@ -150,7 +152,9 @@ pub async fn update_endpoint_data(conn: &SqliteConnection, target_id: i32, new_n
                     id: target_id,
                     name: new_name.to_string(),
                     url: new_url.to_string(),
-                    symbol: new_symbol.to_string()
+                    symbol: new_symbol.to_string(),
+                    explorer_url: new_explorer_url,
+                    chain_id: new_chain_id.to_string()
                 })
             },
             Err(e) => Err(parse_diesel_error(e))

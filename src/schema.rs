@@ -12,6 +12,8 @@ table! {
         name -> Text,
         url -> Text,
         symbol -> Text,
+        chain_id -> Text,
+        explorer_url -> Nullable<Text>,
     }
 }
 

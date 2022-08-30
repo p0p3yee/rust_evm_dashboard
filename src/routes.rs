@@ -68,6 +68,8 @@ pub async fn new_endpoint(ep: web::Json<NewEndpointReq>, pool: web::Data<Pool>) 
         &ep.name,
         &ep.url,
         &ep.symbol,
+        &ep.explorer_url.unwrap_or_default().to_string(),
+        &ep.chain_id
     ).await {
         Ok (name) => response_builder(false, name),
         Err (e) => {
@@ -87,7 +89,9 @@ pub async fn update_endpoint(ep: web::Json<Endpoint>, pool: web::Data<Pool>) -> 
         ep.id,
         &ep.name,
         &ep.url,
-        &ep.symbol
+        &ep.symbol,
+        &ep.chain_id,
+        ep.explorer_url
     ).await {
         Ok (updated_ep) => response_builder(false, updated_ep),
         Err (e) => {
