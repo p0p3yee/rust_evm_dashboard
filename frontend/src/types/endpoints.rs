@@ -4,7 +4,9 @@ use serde::{Deserialize, Serialize};
 pub struct Endpoint {
     pub name: String,
     pub url: String,
-    pub symbol: String
+    pub symbol: String,
+    pub chain_id: String,
+    pub explorer_url: Option<String>,
 }
 
 impl Endpoint {
@@ -19,5 +21,7 @@ pub struct UpdateEndpointReq {
     pub id: i32,
     pub name: String,
     pub url: String,
-    pub symbol: String
+    pub symbol: String,
+    pub chain_id: String,
+    pub explorer_url: Option<String>,
 }
