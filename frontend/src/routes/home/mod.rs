@@ -15,7 +15,7 @@ pub fn home() -> Html {
                 </div>
             </section>
 
-            <div class="container ">
+            <div class="container">
                 <section class="section">
                     <nav class="level">
                         <div class="level-item has-text-centered">

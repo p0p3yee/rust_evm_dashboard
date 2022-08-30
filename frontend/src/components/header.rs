@@ -23,15 +23,21 @@ pub fn header() -> Html {
             <div class="navbar-menu">
                 <div class="navbar-start">
                     <a class="navbar-item">
-                        { "Home" }
+                        <Link<Route> to={Route::Home}>
+                            { "Home" }
+                        </Link<Route>>
                     </a>
 
                     <a class="navbar-item">
-                        { "Accounts" }
+                        <Link<Route> to={Route::Accounts}>
+                            { "Accounts" }
+                        </Link<Route>>
                     </a>
 
                     <a class="navbar-item">
-                        { "Endpoints" }
+                        <Link<Route> to={Route::Endpoints}>
+                            { "Endpoints" }
+                        </Link<Route>>
                     </a>
                 </div>
             </div>
