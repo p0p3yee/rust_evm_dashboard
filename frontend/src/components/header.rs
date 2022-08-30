@@ -1,10 +1,12 @@
 use yew::{function_component, html};
 use yew_router::prelude::*;
 
+use crate::hooks::use_setting_context;
 use crate::routes::Route;
 
 #[function_component(Header)]
 pub fn header() -> Html {
+    let setting_ctx = use_setting_context();
     html! {
         <nav class="navbar" role="navigation" aria-label="main navigation">
             <div class="navbar-brand">
@@ -25,23 +27,47 @@ pub fn header() -> Html {
                     </a>
 
                     <a class="navbar-item">
-                        { "Item1" }
+                        { "Accounts" }
                     </a>
 
                     <a class="navbar-item">
-                        { "Item 2" }
+                        { "Endpoints" }
                     </a>
                 </div>
             </div>
 
             <div class="navbar-end">
                 <div class="navbar-item">
-                    { "Connected to: " } {"Name"}
+                    {
+                        if setting_ctx.is_none() {
+                            html! {
+                                {"No Endpoint Available"}
+                            }
+                        } else {
+                            html! {
+                                <>
+                                    { "Connected to: " } { &setting_ctx.name }
+                                </>
+                            }
+                        }
+                    }
                 </div>
                 <div class="navbar-item">
-                    <a class="button is-warning">
-                        { "Switch" }
-                    </a>
+                    {
+                        if setting_ctx.is_none() {
+                            html! {
+                                <a class="button is-success">
+                                    { "Add Endpoint now" }
+                                </a>
+                            }
+                        } else {
+                            html! {
+                                <a class="button is-warning">
+                                    { "Switch" }
+                                </a>
+                            }
+                        }
+                    }
                 </div>
             </div>
         </nav>
