@@ -62,9 +62,13 @@ pub fn header() -> Html {
                     {
                         if setting_ctx.is_none() {
                             html! {
-                                <a class="button is-success">
-                                    { "Add Endpoint now" }
-                                </a>
+                                
+                                    <Link<Route> to={Route::Endpoints}>
+                                        <a class="button is-success">
+                                            { "Add Endpoint" }
+                                        </a>
+                                    </Link<Route>>
+                               
                             }
                         } else {
                             html! {
