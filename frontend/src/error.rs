@@ -12,4 +12,7 @@ pub enum Error {
 
     #[error("Invalid request url")]
     InvalidReqUrl,
+
+    #[error("Endpoint url unreachable")]
+    UnreachableEndpoint,
 }

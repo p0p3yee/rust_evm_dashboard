@@ -1,5 +1,5 @@
 use dotenv_codegen::dotenv;
-use gloo::storage::{LocalStorage, Storage};
+use gloo_storage::{LocalStorage, Storage};
 use lazy_static::lazy_static;
 use parking_lot::RwLock;
 use serde::{de::DeserializeOwned, Serialize};
