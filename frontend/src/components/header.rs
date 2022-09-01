@@ -45,39 +45,40 @@ pub fn header() -> Html {
             <div class="navbar-end">
                 <div class="navbar-item">
                     {
-                        if setting_ctx.is_none() {
-                            html! {
-                                {"No Endpoint Available"}
-                            }
+                        if !setting_ctx.is_none() {
+                            { "Connected to:"  }
                         } else {
-                            html! {
-                                <>
-                                    { "Connected to: " } { &setting_ctx.name }
-                                </>
-                            }
+                            { "Not available" }
                         }
                     }
+                    <strong>
+                        {
+                            if !setting_ctx.is_none() {
+                                { setting_ctx.name.clone() }
+                            } else {
+                                { "".to_string() }
+                            }
+                        }
+                    </strong>
                 </div>
                 <div class="navbar-item">
-                    {
-                        if setting_ctx.is_none() {
-                            html! {
-                                
-                                    <Link<Route> to={Route::Endpoints}>
-                                        <a class="button is-success">
-                                            { "Add Endpoint" }
-                                        </a>
-                                    </Link<Route>>
-                               
+                    <Link<Route> to={Route::Endpoints}>
+                        <a class={
+                            if setting_ctx.is_none() {
+                                "button is-success"
+                            } else {
+                                "button is-warning"
                             }
-                        } else {
-                            html! {
-                                <a class="button is-warning">
-                                    { "Switch" }
-                                </a>
+                        }>
+                        {
+                            if setting_ctx.is_none() {
+                                { "Add Endpoint" }
+                            } else {
+                                { "Switch" }   
                             }
                         }
-                    }
+                        </a>
+                    </Link<Route>>
                 </div>
             </div>
         </nav>
