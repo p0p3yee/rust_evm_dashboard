@@ -15,7 +15,6 @@ pub fn home() -> Html {
         let setting_ctx = setting_ctx.clone();
         let w3 = w3.clone();
         let block_height = block_height.clone();
-        
         use_effect_with_deps(
             move |setting_ctx| {
                 if !setting_ctx.url.clone().is_empty() {

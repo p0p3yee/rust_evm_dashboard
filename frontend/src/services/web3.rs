@@ -10,7 +10,7 @@ pub struct Web3Service {
 
 impl Web3Service {
     pub async fn new(endpoint: String, chain_id: String) -> Result<Self, Error> {
-        let transport = web3::transports::Http::new("http://localhost:8545").unwrap();
+        let transport = web3::transports::Http::new(&endpoint.to_string()).unwrap();
         let client = web3::Web3::new(transport);
         let x = client.eth().block_number().await;
         if let Err(e) = x {
