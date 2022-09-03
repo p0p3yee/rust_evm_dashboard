@@ -37,4 +37,17 @@ impl Web3Service {
             return Err(res.err().unwrap())
         }
     }
+
+    pub async fn get_gas(&self) -> Result<String, Error> {
+        if self.client.is_none() {
+            return Err(Error::Unreachable)
+        }
+        let client = self.client.clone().unwrap();
+        let res = client.eth().gas_price().await;
+        if let Ok(val) = res{
+            return Ok(val.to_string())
+        } else {
+            return Err(res.err().unwrap())
+        }
+    }
 }

@@ -1,6 +1,6 @@
 use yew::prelude::*;
 use wasm_bindgen_futures::spawn_local;
-
+use web3_unit_converter::Unit;
 use crate::hooks::use_setting_context;
 use crate::services::web3::Web3Service;
 
@@ -10,11 +10,13 @@ pub fn home() -> Html {
     let setting_ctx = use_setting_context();
     let w3 = use_state(Web3Service::default);
     let block_height = use_state(u64::default);
+    let gas = use_state(String::default);
 
     {
         let setting_ctx = setting_ctx.clone();
         let w3 = w3.clone();
         let block_height = block_height.clone();
+        let gas = gas.clone();
         use_effect_with_deps(
             move |setting_ctx| {
                 if !setting_ctx.url.clone().is_empty() {
@@ -30,6 +32,9 @@ pub fn home() -> Html {
                             w3.set(okw3s);
                             if let Ok(result) = okw3sc.block_height().await {
                                 block_height.set(result);
+                            }
+                            if let Ok(g) = okw3sc.get_gas().await {
+                                gas.set(g);
                             }
                         }
                     });
@@ -76,8 +81,8 @@ pub fn home() -> Html {
                         </div>
                         <div class="level-item has-text-centered">
                         <div>
-                            <p class="heading">{"ABC"}</p>
-                            <p class="title">{123}</p>
+                            <p class="heading">{"Gas Price"}</p>
+                            <p class="title">{Unit::Wei(&gas.clone().to_string()).to_gwei_str().unwrap_or("0".to_string())} {" Gwei"}</p>
                         </div>
                         </div>
                         <div class="level-item has-text-centered">
