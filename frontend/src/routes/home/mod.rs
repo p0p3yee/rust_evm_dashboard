@@ -78,23 +78,11 @@ pub fn home() -> Html {
                             <p class="heading">{"Current Block"}</p>
                             <p class="title">{"#"}{block_height.clone().to_string()}</p>
                         </div>
-                        </div>
-                        <div class="level-item has-text-centered">
+                    </div>
+                    <div class="level-item has-text-centered">
                         <div>
                             <p class="heading">{"Gas Price"}</p>
                             <p class="title">{Unit::Wei(&gas.clone().to_string()).to_gwei_str().unwrap_or("0".to_string())} {" Gwei"}</p>
-                        </div>
-                        </div>
-                        <div class="level-item has-text-centered">
-                        <div>
-                            <p class="heading">{"Def"}</p>
-                            <p class="title">{"555"}</p>
-                        </div>
-                        </div>
-                        <div class="level-item has-text-centered">
-                        <div>
-                            <p class="heading">{"Ghi"}</p>
-                            <p class="title">{"abcde"}</p>
                         </div>
                     </div>
                 </nav>   

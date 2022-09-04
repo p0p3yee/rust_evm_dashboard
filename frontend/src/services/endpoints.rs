@@ -1,5 +1,4 @@
-use super::requests::request_post;
-use super::{request_get};
+use super::{request_get, request_post};
 use crate::error::Error;
 use crate::types::*;
 

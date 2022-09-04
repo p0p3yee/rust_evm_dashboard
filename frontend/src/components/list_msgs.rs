@@ -6,6 +6,7 @@ pub struct ListMsgsProps {
     pub msg: String,
 }
 
+// TODO: Display Notification
 #[function_component(ListMessages)]
 pub fn list_msgs(props: &ListMsgsProps) -> Html {
     let is_closed = use_state(|| false);
