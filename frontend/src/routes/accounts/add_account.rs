@@ -4,6 +4,7 @@ use yew_hooks::prelude::*;
 
 use crate::types::{Account, form::FormFieldState};
 use crate::services::accounts::create;
+use crate::services::web3::{is_valid_address, is_valid_secret_key};
 
 #[derive(Clone, Default)]
 struct FormState {
@@ -94,7 +95,7 @@ pub fn add_account() -> Html {
                 new_form_state.addr = FormFieldState::ErrorState("Address can't be empty".to_string());
             } else {
                 // Check if address is valid
-                if input_val.starts_with("0x") && input_val.len() == 42 {
+                if is_valid_address(input_val.clone()) {
                     new_form_state.addr = FormFieldState::ValidState;
                 } else {
                     new_form_state.addr = FormFieldState::ErrorState("Invalid address".to_string());
@@ -120,7 +121,7 @@ pub fn add_account() -> Html {
 
             if !input_val.is_empty() {
                 // Check if pkey is valid
-                if input_val.len() == 64 {
+                if is_valid_secret_key(input_val.clone()) {
                     new_form_state.pkey = FormFieldState::ValidState;
                 } else {
                     new_form_state.pkey = FormFieldState::ErrorState("Invalid private key".to_string());

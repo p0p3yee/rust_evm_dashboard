@@ -22,6 +22,7 @@ gloo-storage = "0.2"
 parking_lot = "0.12.1"
 wasm-bindgen-futures = "0.4.32"
 web3-unit-converter = "0.1.0"
+regex = "1.6.0"
 
 [dependencies.web-sys]
 version = "0.3.59"

@@ -1,4 +1,14 @@
 use web3::Error;
+use lazy_static::lazy_static;
+use regex::Regex;
+
+lazy_static! {
+    static ref ADDR_RE: Regex = Regex::new(r"^(0x){1}(?i)[0-9a-f]{40}$").unwrap();
+}
+
+lazy_static! {
+    static ref PKEY_RE: Regex = Regex::new(r"^(?i)[0-9a-f]{64}$").unwrap();
+}
 
 #[derive(Clone, Default)]
 pub struct Web3Service {
@@ -6,7 +16,6 @@ pub struct Web3Service {
     pub chain_id: String,
     client: Option<web3::Web3<web3::transports::Http>>
 }
-
 
 impl Web3Service {
     pub async fn new(endpoint: String, chain_id: String) -> Result<Self, Error> {
@@ -50,4 +59,12 @@ impl Web3Service {
             return Err(res.err().unwrap())
         }
     }
+}
+
+pub fn is_valid_address( address: String) -> bool {
+    ADDR_RE.is_match(&address.to_string())
+}
+
+pub fn is_valid_secret_key(pkey_raw: String) -> bool {
+    PKEY_RE.is_match(&pkey_raw.to_string())
 }
